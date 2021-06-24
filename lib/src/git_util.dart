@@ -15,8 +15,12 @@ class GitUtil {
       return null;
     }
 
-    return _parseOutput('git log --follow --format=%aI -1 -- ${file.path}'
-        .toList().join('\n'));
+    try {
+      return _parseOutput('git log --follow --format=%aI -1 -- ${file.path}'
+          .toList().join('\n'));
+    } catch (e) {
+      return null;
+    }
   }
 
   /// Get date when [file] was first tracked in git history.
@@ -24,15 +28,21 @@ class GitUtil {
     if (!isGitInstalled() || !isGitDir()) {
       return null;
     }
-    final result =
-        'git log --diff-filter=A --follow --format=%aI -1 -- ${file.path}'
-        .firstLine;
 
-    if (result == null) {
+    try {
+      final result =
+          'git log --diff-filter=A --follow --format=%aI -1 -- ${file.path}'
+              .firstLine;
+
+      if (result == null) {
+        return null;
+      }
+
+      return _parseOutput(result);
+    } catch (e) {
       return null;
     }
 
-    return _parseOutput(result);
   }
 
   static bool isGitInstalled() {

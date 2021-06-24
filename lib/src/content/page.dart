@@ -1,3 +1,4 @@
+import 'package:anvil/anvil.dart';
 import 'package:anvil/src/config.dart';
 import 'package:anvil/src/content/content.dart';
 import 'package:anvil/src/content/section.dart';
@@ -11,6 +12,7 @@ class Page extends Content {
   Page({
     required this.path,
     this.content,
+    this.contentType,
     this.metadata = const <String, dynamic>{},
   });
 
@@ -52,6 +54,8 @@ class Page extends Content {
   final String path;
 
   final String? content;
+
+  final ContentFileType? contentType;
 
   final Map<String, dynamic> metadata;
 
@@ -113,8 +117,9 @@ class Page extends Content {
     // TODO: [metadata] should be merged into the same map.
     return {
       'title': title,
-      'path': path.replaceFirst('.md', '/'),
+      'path': path.replaceFirst('.md', '/').replaceFirst('.html', '/'),
       'content': content,
+      'contentType': contentType.toString(),
       'metadata': metadata,
     };
   }

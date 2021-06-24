@@ -25,8 +25,13 @@ class ContentParser {
   Future<Content> parse(FileSystemEntity entity) async {
     return entity.when(
       file: (file) async {
+
+        final extension = file.path.substring(file.path.lastIndexOf('.') + 1);
+        final contentType = (extension == 'html')
+            ? ContentFileType.html : ContentFileType.markdown;
+
         final content = await file.readAsString();
-        final parsed = await _parseFile(content);
+        final parsed = await _parseFile(contentType, content);
 
         // Remove leading 'content/' part of the directory.
         final path = Path.normalize(file.path).replaceFirst(
@@ -47,6 +52,7 @@ class ContentParser {
 
         return Page(
           path: path,
+          contentType: parsed.type,
           content: parsed.content,
           metadata: metadata,
         );
@@ -89,23 +95,26 @@ class ContentParser {
     )!;
   }
 
-  Future<MarkdownFile> _parseFile(String markdown) async {
-    if (_delimiter.allMatches(markdown).length < 2 ||
-        _delimiter.firstMatch(markdown)!.start != 0) {
+  Future<ContentFile> _parseFile(
+      ContentFileType type,
+      String fileContent) async {
+    if (_delimiter.allMatches(fileContent).length < 2 ||
+        _delimiter.firstMatch(fileContent)!.start != 0) {
       throw const MissingFrontmatterError(
         'Front matter is invalid or missing.',
       );
     }
 
-    final matches = _delimiter.allMatches(markdown).toList();
-    final rawMetadata = markdown.substring(matches[0].start, matches[1].end);
+    final matches = _delimiter.allMatches(fileContent).toList();
+    final rawMetadata = fileContent.substring(matches[0].start, matches[1].end);
     final metadata = rawMetadata.substring(3, rawMetadata.length - 4).trim();
 
     final m = yaml.loadYaml(metadata) as yaml.YamlMap?;
 
-    final content = markdown.substring(matches[1].end).trim();
+    final content = fileContent.substring(matches[1].end).trim();
 
-    return MarkdownFile(
+    return ContentFile(
+      type: type,
       content: content,
       metadata: m ?? yaml.YamlMap.wrap(<String, Object?>{}),
     );

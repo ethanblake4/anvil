@@ -1,13 +1,21 @@
 import 'package:yaml/yaml.dart';
 
-class MarkdownFile {
-  MarkdownFile({
+class ContentFile {
+  ContentFile({
+    required this.type,
     required this.metadata,
     required this.content,
   });
 
   final YamlMap metadata;
 
-  /// Unrendered markdown content.
+  final ContentFileType type;
+
+  /// Unrendered content.
   final String content;
+}
+
+enum ContentFileType {
+  markdown,
+  html
 }

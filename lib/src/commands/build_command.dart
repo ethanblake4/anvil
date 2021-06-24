@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:anvil/anvil.dart';
 import 'package:anvil/src/styles/styles_builder.dart';
 import 'package:args/command_runner.dart';
 import 'package:anvil/src/build/content_parser.dart';
@@ -236,19 +237,21 @@ class BuildCommand extends Command<int> {
       } catch (e) {
         _abortBuild(BuildError(e.toString(), '  Fix file ${page.path}'));
       }
-    } else {
-      metadata['content'] = page.content;
     }
 
+    if (page.contentType == ContentFileType.markdown) {
+      final renderedMarkdownContent = markdownToHtml(
+        content,
+        extensionSet: ExtensionSet.gitHubWeb,
+        blockSyntaxes: [FootnoteSyntax()],
+        inlineSyntaxes: [FootnoteReferenceSyntax()],
+      );
 
-    final renderedMarkdownContent = markdownToHtml(
-      content,
-      extensionSet: ExtensionSet.gitHubWeb,
-      blockSyntaxes: [FootnoteSyntax()],
-      inlineSyntaxes: [FootnoteReferenceSyntax()],
-    );
+      metadata['content'] = renderedMarkdownContent;
+    } else {
+      metadata['content'] = content;
+    }
 
-    metadata['content'] = renderedMarkdownContent;
     var output = template.renderMap(metadata);
 
     if (isServe) {
