@@ -1,18 +1,18 @@
 import 'dart:async';
 
 import 'package:args/command_runner.dart';
-import 'package:blake/src/config.dart';
-import 'package:blake/src/file_system.dart';
-import 'package:blake/src/log.dart';
-import 'package:blake/src/utils.dart';
-import 'package:blake/src/yaml.dart';
+import 'package:anvil/src/config.dart';
+import 'package:anvil/src/file_system.dart';
+import 'package:anvil/src/log.dart';
+import 'package:anvil/src/utils.dart';
+import 'package:anvil/src/yaml.dart';
 
 class InitCommand extends Command<int> {
   @override
   final name = 'init';
 
   @override
-  String get summary => 'Setup new project.';
+  String get summary => 'Create new Anvil project.';
 
   @override
   final description = _description;
@@ -35,6 +35,7 @@ class InitCommand extends Command<int> {
       await fs.directory('$projectDir/content').create();
       await fs.directory('$projectDir/templates').create();
       await fs.directory('$projectDir/static').create();
+      await fs.directory('$projectDir/styles').create();
       await fs.directory('$projectDir/data').create();
       await fs.directory('$projectDir/types').create();
     } catch (e) {
@@ -43,8 +44,8 @@ class InitCommand extends Command<int> {
     }
 
     final serverStartHelp = generateInCurrentDir
-        ? 'Start server by `blake serve`'
-        : 'Start server by `cd $projectDir && blake serve`';
+        ? 'Start server by `anvil serve`'
+        : 'Start server by `cd $projectDir && anvil serve`';
     log.info(
       'Site initialized successfully\n       $serverStartHelp',
     );
@@ -54,11 +55,12 @@ class InitCommand extends Command<int> {
 
   Future<void> _initConfig(String root) async {
     final configFile =
-        await fs.file(Path.join(root, 'config.yaml')).create(recursive: true);
+        await fs.file(Path.join(root, kAnvilConfigFile))
+            .create(recursive: true);
     final config = await configFile.readAsString();
 
     if (config.trim().isNotEmpty) {
-      log.warning('WARNING: config.yaml file already exists.');
+      log.warning('WARNING: $kAnvilConfigFile file already exists.');
       return;
     }
 
@@ -76,8 +78,8 @@ class InitCommand extends Command<int> {
 }
 
 const _description = '''
-Setup new project. 
+Create new Anvil project.
 
-Use `blake init` to initialize project in current repository.
-If you want to initialize project in subdirectory call `blake init folder_name`.
+Use `anvil init` to initialize project in current repository.
+If you want to initialize project in subdirectory call `anvil init folder_name`.
 ''';

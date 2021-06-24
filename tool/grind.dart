@@ -3,7 +3,7 @@
 import 'dart:convert';
 import 'dart:io' as io;
 
-import 'package:blake/src/utils.dart';
+import 'package:anvil/src/utils.dart';
 import 'package:grinder/grinder.dart';
 
 part 'compile.dart';
@@ -27,28 +27,28 @@ Future<void> compile() async {
 
   const buildDir = 'build';
   final binaryName = platform.when(
-    mac: () => 'blake',
-    windows: () => 'blake.exe',
-    linux: () => 'blake',
+    mac: () => 'anvil',
+    windows: () => 'anvil.exe',
+    linux: () => 'anvil',
   );
   final outputPath = Path.join(buildDir, binaryName);
 
   await io.Directory(buildDir).create();
   final compileResult = await io.Process.run(
     'dart',
-    ['compile', 'exe', 'bin/blake.dart', '-o', outputPath],
+    ['compile', 'exe', 'bin/anvil.dart', '-o', outputPath],
   );
 
   const archiveExtension = '.zip';
   final archiveName = platform.when(
-    mac: () => 'blake-mac',
-    windows: () => 'blake-win',
-    linux: () => 'blake-linux',
+    mac: () => 'anvil-mac',
+    windows: () => 'anvil-win',
+    linux: () => 'anvil-linux',
   );
 
   final archiveResult = await io.Process.run(
     'tar',
-    ['-czf', archiveName + archiveExtension, 'blake'],
+    ['-czf', archiveName + archiveExtension, 'anvil'],
     workingDirectory: buildDir,
   );
 

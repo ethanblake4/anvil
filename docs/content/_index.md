@@ -18,6 +18,6 @@ It is provided as a single binary and can be used even without Dart installed.
 * `sitemap.xml` generation.
 * Inline & body shortcodes.
 
-Check [GitHub](https://github.com/vaetas/blake) page or [pub.dev](https://pub.dev/packages/blake).
+Check [GitHub](https://github.com/ethananvil4/anvil) page or [pub.dev](https://pub.dev/packages/anvil).
 
 **Development is still in progress.** Everything can change at any time.

@@ -3,4 +3,4 @@ title: Data example
 template: data-example.html
 ---
 
-Example for loading YAML/JSON data.
+Example for loading JSON data.

@@ -1,7 +1,8 @@
-import 'package:blake/src/config.dart';
-import 'package:blake/src/content/page.dart';
-import 'package:blake/src/file_system.dart';
-import 'package:blake/src/utils.dart';
+import 'package:anvil/src/config.dart';
+import 'package:anvil/src/content/page.dart';
+import 'package:anvil/src/file_system.dart';
+import 'package:anvil/src/log.dart';
+import 'package:anvil/src/utils.dart';
 import 'package:xml/xml.dart';
 
 class SitemapBuilder {
@@ -14,14 +15,17 @@ class SitemapBuilder {
   final Config config;
 
   Future<void> build() async {
+
     final builder = XmlBuilder();
+
+    final nest = await _buildNodes();
 
     // ignore: cascade_invocations
     builder
       ..processing('xml', 'version="1.0" encoding="utf-8" standalone="yes"')
       ..element(
         'urlset',
-        nest: await _buildNodes(),
+        nest: nest,
         attributes: {
           'xmlns': 'http://www.sitemaps.org/schemas/sitemap/0.9',
           'xmlns:xhtml': 'http://www.w3.org/1999/xhtml',
@@ -32,10 +36,14 @@ class SitemapBuilder {
   }
 
   Future<Iterable<XmlNode>> _buildNodes() async {
-    return pages.asyncMap((e) async {
-      final _updated = await e.getUpdated(config);
+
+    return pages.map((e) {
+
+      final _updated = e.getUpdated(config);
+
       final url = e.getPublicUrl(config);
-      return XmlElement(
+
+      final x =  XmlElement(
         XmlName('url'),
         [],
         [
@@ -52,6 +60,8 @@ class SitemapBuilder {
             )
         ],
       );
+
+      return x;
     });
   }
 

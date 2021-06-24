@@ -1,6 +1,6 @@
-import 'package:blake/src/config.dart';
-import 'package:blake/src/errors.dart';
-import 'package:blake/src/util/either.dart';
+import 'package:anvil/src/config.dart';
+import 'package:anvil/src/errors.dart';
+import 'package:anvil/src/util/either.dart';
 import 'package:file/file.dart';
 import 'package:file/local.dart';
 import 'package:yaml/yaml.dart';
@@ -99,16 +99,16 @@ Future<Either<ConfigError, Config>> getConfig() async {
   }
 
   return const Left(
-    ConfigError('Config file does not exists in current location'),
+    ConfigError('Config file does not exist in current location'),
   );
 }
 
 Future<bool> isProjectDirectory() {
-  return fs.file(_kConfigFile).exists();
+  return fs.file(kAnvilConfigFile).exists();
 }
 
 Future<File> _getConfigFile() async {
-  return fs.file(_kConfigFile).create();
+  return fs.file(kAnvilConfigFile).create();
 }
 
-const _kConfigFile = 'config.yaml';
+const kAnvilConfigFile = 'anvil.yaml';

@@ -8,6 +8,7 @@ class BuildConfig {
     String? contentDir,
     String? templatesDir,
     String? staticDir,
+    String? stylesDir,
     String? dataDir,
     String? typesDir,
     bool? generateSearchIndex,
@@ -17,6 +18,7 @@ class BuildConfig {
         templatesDir = templatesDir ?? 'templates',
         staticDir = staticDir ?? 'static',
         dataDir = dataDir ?? 'data',
+        stylesDir = stylesDir ?? 'styles',
         typesDir = typesDir ?? 'types',
         generateSearchIndex = generateSearchIndex ?? false;
 
@@ -31,6 +33,7 @@ class BuildConfig {
       contentDir: map[_kContentDir] as String?,
       templatesDir: map[_kTemplatesDir] as String?,
       staticDir: map[_kStaticDir] as String?,
+      stylesDir: map[_kStylesDir] as String?,
       dataDir: map[_kDataDir] as String?,
       typesDir: map[_kTypesDir] as String?,
       generateSearchIndex: map[_kGenerateSearchIndex] as bool?,
@@ -48,6 +51,9 @@ class BuildConfig {
 
   /// Templates for rendering markdown files.
   final String templatesDir;
+
+  /// Uncompiled SCSS styles
+  final String stylesDir;
 
   /// Static assets like CSS or JS.
   final String staticDir;
@@ -68,6 +74,7 @@ class BuildConfig {
       _kContentDir: contentDir,
       _kTemplatesDir: templatesDir,
       _kStaticDir: staticDir,
+      _kStylesDir: stylesDir,
       _kDataDir: dataDir,
       _kTypesDir: typesDir,
       _kGenerateSearchIndex: generateSearchIndex,
@@ -83,6 +90,7 @@ const _kPublicDir = 'public_dir';
 const _kContentDir = 'content_dir';
 const _kTemplatesDir = 'templates_dir';
 const _kStaticDir = 'static_dir';
+const _kStylesDir = 'styles_dir';
 const _kDataDir = 'data_dir';
 const _kTypesDir = 'types_dir';
 const _kGenerateSearchIndex = 'generate_search_index';

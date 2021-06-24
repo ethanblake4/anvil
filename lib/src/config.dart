@@ -1,8 +1,7 @@
-import 'package:blake/src/build/build_config.dart';
-import 'package:blake/src/commands/serve_command.dart';
-import 'package:blake/src/serve/serve_config.dart';
-import 'package:blake/src/template/environment.dart';
-import 'package:blake/src/template/templates_config.dart';
+import 'package:anvil/src/build/build_config.dart';
+import 'package:anvil/src/commands/serve_command.dart';
+import 'package:anvil/src/serve/serve_config.dart';
+import 'package:anvil/src/template/templates_config.dart';
 import 'package:jinja/jinja.dart';
 import 'package:yaml/yaml.dart';
 
@@ -13,7 +12,6 @@ class Config {
     this.baseUrl = '',
     required this.build,
     required this.serve,
-    required this.templates,
     YamlMap? extra,
   }) : extra = extra ?? YamlMap();
 
@@ -21,7 +19,6 @@ class Config {
     return Config(
       build: BuildConfig.fromYaml(map[_kBuild] as YamlMap?),
       serve: ServeConfig.fromYaml(map[_kServe] as YamlMap?),
-      templates: TemplatesConfig.fromYaml(map[_kTemplates] as YamlMap?),
       title: map[_kTitle] as String? ?? '',
       author: map[_kAuthor] as String? ?? '',
       baseUrl: map[_kBaseUrl] as String? ?? '',
@@ -29,7 +26,7 @@ class Config {
     );
   }
 
-  /// Populated config used during `blake init`.
+  /// Populated config used during `anvil init`.
   factory Config.initial() {
     final serveConfig = ServeConfig();
     return Config(
@@ -39,7 +36,6 @@ class Config {
       extra: YamlMap(),
       build: const BuildConfig(),
       serve: serveConfig,
-      templates: const TemplatesConfig(),
     );
   }
 
@@ -48,13 +44,12 @@ class Config {
   final String baseUrl;
   final BuildConfig build;
   final ServeConfig serve;
-  final TemplatesConfig templates;
   final YamlMap extra;
 
   /// [FileSystemLoader.autoReload] is not required because we handle reloading
   /// templates ourselves inside [ServeCommand]. Only this way we can ensure
   /// the template is updated before triggering rebuild.
-  late final environment = CustomEnvironment(
+  late final environment = Environment(
     loader: FileSystemLoader(
       path: build.templatesDir,
     ),
@@ -71,7 +66,6 @@ class Config {
       'baseUrl': baseUrl,
       _kBuild: build.toMap(),
       _kServe: serve.toMap(),
-      _kTemplates: templates.toMap(),
       _kExtra: extra,
     };
   }
@@ -85,5 +79,4 @@ const _kAuthor = 'author';
 const _kBaseUrl = 'base_url';
 const _kBuild = 'build';
 const _kServe = 'serve';
-const _kTemplates = 'templates';
 const _kExtra = 'extra';

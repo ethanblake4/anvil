@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:args/command_runner.dart';
-import 'package:blake/src/assets/live_reload.dart';
-import 'package:blake/src/commands/build_command.dart';
-import 'package:blake/src/config.dart';
-import 'package:blake/src/file_system.dart';
-import 'package:blake/src/log.dart';
-import 'package:blake/src/serve/local_server.dart';
-import 'package:blake/src/serve/watch.dart';
+import 'package:anvil/src/assets/live_reload.dart';
+import 'package:anvil/src/commands/build_command.dart';
+import 'package:anvil/src/config.dart';
+import 'package:anvil/src/file_system.dart';
+import 'package:anvil/src/log.dart';
+import 'package:anvil/src/serve/local_server.dart';
+import 'package:anvil/src/serve/watch.dart';
 import 'package:glob/glob.dart';
 
 /// Build and serve static files on local server with live-reload support.
@@ -18,16 +18,15 @@ import 'package:glob/glob.dart';
 ///   data/
 ///   static/
 ///   templates/
+///   styles/
 ///
 /// Changing other files will not trigger rebuild.
 class ServeCommand extends Command<int> {
-  ServeCommand(this.config) {
+  ServeCommand(this._config) {
     argParser
       ..addOption('address', abbr: 'a', defaultsTo: '127.0.0.1')
       ..addOption('port', abbr: 'p', defaultsTo: '4040')
       ..addOption('websocket-port', defaultsTo: '4041');
-
-    log.verbose = config.serve.verbose;
   }
 
   @override
@@ -39,14 +38,23 @@ class ServeCommand extends Command<int> {
   @override
   final String description = _description;
 
-  final Config config;
+  final Config? _config;
 
   late BuildCommand buildCommand;
 
   @override
-  FutureOr<int> run() async => _serve();
+  FutureOr<int> run() {
+    if(_config == null) {
+      log.error('No $kAnvilConfigFile present in the current directory');
+      return 1;
+    }
 
-  Future<void> _rebuild() async {
+    log.verbose = _config!.serve.verbose;
+
+    return _serve(_config!);
+  }
+
+  Future<void> _rebuild(Config config) async {
     final result = await buildCommand.build(
       config,
       isServe: true,
@@ -57,10 +65,10 @@ class ServeCommand extends Command<int> {
     );
   }
 
-  Future<int> _serve() async {
+  Future<int> _serve(Config config) async {
     buildCommand = BuildCommand(config);
     // Build once before starting server to ensure there is something to show.
-    await _rebuild();
+    await _rebuild(config);
 
     try {
       await setupReloadScript(config);
@@ -74,9 +82,10 @@ class ServeCommand extends Command<int> {
 
     final glob = Glob(
       '{'
-      'config.yaml,'
+      '$kAnvilConfigFile,'
       '${config.build.contentDir}/**,'
       '${config.build.dataDir}/**,'
+      '${config.build.stylesDir}/**,'
       '${config.build.staticDir}/**,'
       '${config.build.templatesDir}/**'
       '}',
@@ -95,7 +104,7 @@ class ServeCommand extends Command<int> {
           path: templatePath,
         );
       }
-      await _rebuild();
+      await _rebuild(config);
       _onReload.add(null);
     });
 

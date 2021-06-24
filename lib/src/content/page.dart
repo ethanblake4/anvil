@@ -1,9 +1,10 @@
-import 'package:blake/src/config.dart';
-import 'package:blake/src/content/content.dart';
-import 'package:blake/src/content/section.dart';
-import 'package:blake/src/file_system.dart';
-import 'package:blake/src/git_util.dart';
-import 'package:blake/src/utils.dart';
+import 'package:anvil/src/config.dart';
+import 'package:anvil/src/content/content.dart';
+import 'package:anvil/src/content/section.dart';
+import 'package:anvil/src/file_system.dart';
+import 'package:anvil/src/git_util.dart';
+import 'package:anvil/src/log.dart';
+import 'package:anvil/src/utils.dart';
 
 /// [Page] is leaf node which cannot have other subpages.
 class Page extends Content {
@@ -33,13 +34,14 @@ class Page extends Content {
     return _date != null ? DateTime.parse(_date) : null;
   }
 
-  Future<DateTime?> getUpdated(Config config) async {
+  DateTime? getUpdated(Config config) {
     final _updated = metadata['updated'] as String?;
+
     if (_updated != null) {
       return DateTime.parse(_updated);
     } else {
       // TODO: Git value may be cached after obtaining.
-      final _gitModified = await GitUtil.getModified(
+      final _gitModified = GitUtil.getModified(
         fs.file(Path.join(config.build.contentDir, path)),
       );
       return _gitModified ?? date;
@@ -118,11 +120,11 @@ class Page extends Content {
   }
 
   @override
-  R? when<R>({
-    R Function(Section section)? section,
-    R Function(Page page)? page,
+  R? when<R>(Config config, {
+    R Function(Config config, Section section)? section,
+    R Function(Config config, Page page)? page,
   }) {
-    return page?.call(this);
+    return page?.call(config, this);
   }
 
   @override

@@ -1,6 +1,6 @@
-import 'package:blake/src/config.dart';
-import 'package:blake/src/content/content.dart';
-import 'package:blake/src/content/page.dart';
+import 'package:anvil/src/config.dart';
+import 'package:anvil/src/content/content.dart';
+import 'package:anvil/src/content/page.dart';
 
 /// Build JSON search index for static search of your content.
 ///
@@ -32,7 +32,8 @@ List<Map<String, dynamic>> createSearchIndex(
   final list = <Map<String, dynamic>>[];
 
   content.when(
-    page: (page) {
+    config,
+    page: (config, page) {
       final metadata = page.toMap();
       list.add(
         <String, dynamic>{
@@ -41,7 +42,7 @@ List<Map<String, dynamic>> createSearchIndex(
         },
       );
     },
-    section: (section) {
+    section: (config, section) {
       for (final element in section.children) {
         list.addAll(createSearchIndex(element, config));
       }

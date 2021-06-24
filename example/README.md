@@ -1,3 +1,3 @@
-# Blake Example Site
+# Anvil Example Site
 
-This folder contains all required files to generate basic website.
+This folder contains all required files to generate a basic website.

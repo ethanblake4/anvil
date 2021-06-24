@@ -1,5 +1,5 @@
-import 'package:blake/src/config.dart';
-import 'package:blake/src/file_system.dart';
+import 'package:anvil/src/config.dart';
+import 'package:anvil/src/file_system.dart';
 import 'package:jinja/jinja.dart';
 
 Future<void> setupReloadScript(Config config) async {

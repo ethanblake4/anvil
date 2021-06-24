@@ -1,17 +1,14 @@
 import 'dart:io';
 
-import 'package:blake/src/config.dart';
-import 'package:blake/src/content/content.dart';
-import 'package:blake/src/content/page.dart';
-import 'package:blake/src/content/section.dart';
-import 'package:blake/src/errors.dart';
-import 'package:blake/src/file_system.dart';
-import 'package:blake/src/git_util.dart';
-import 'package:blake/src/log.dart';
-import 'package:blake/src/markdown/markdown_file.dart';
-import 'package:blake/src/shortcode.dart';
-import 'package:blake/src/template/environment.dart';
-import 'package:blake/src/utils.dart';
+import 'package:anvil/src/config.dart';
+import 'package:anvil/src/content/content.dart';
+import 'package:anvil/src/content/page.dart';
+import 'package:anvil/src/content/section.dart';
+import 'package:anvil/src/errors.dart';
+import 'package:anvil/src/file_system.dart';
+import 'package:anvil/src/git_util.dart';
+import 'package:anvil/src/markdown/markdown_file.dart';
+import 'package:anvil/src/utils.dart';
 import 'package:file/file.dart';
 import 'package:yaml/yaml.dart' as yaml;
 
@@ -19,11 +16,9 @@ final _delimiter = RegExp(r'(---)(\n|\r)?');
 
 class ContentParser {
   const ContentParser({
-    required this.shortcodeTemplates,
     required this.config,
   });
 
-  final List<ShortcodeTemplate> shortcodeTemplates;
   final Config config;
 
   /// Recursively parse file tree starting from [entity].
@@ -42,8 +37,8 @@ class ContentParser {
         final metadata = Map<String, dynamic>.from(parsed.metadata);
 
         if (!metadata.containsKey('date')) {
-          if (await GitUtil.isGitInstalled()) {
-            final date = await GitUtil.getModified(file);
+          if (GitUtil.isGitInstalled()) {
+            final date = GitUtil.getModified(file);
             if (date != null) {
               metadata['date'] = date.toIso8601String();
             }
@@ -125,101 +120,4 @@ class MissingFrontmatterError extends BuildError {
 
   @override
   String get name => 'MissingFrontmatterError';
-}
-
-/// Replace every shortcode inside text file with its value.
-///
-/// To render an `input` call [ShortcodeRenderer.render] method.
-class ShortcodeRenderer {
-  ShortcodeRenderer({
-    required this.environment,
-    required this.shortcodeTemplates,
-  });
-
-  final CustomEnvironment environment;
-  final List<ShortcodeTemplate> shortcodeTemplates;
-
-  final parser = ShortcodeParser();
-
-  String render(String input) {
-    var _result = input;
-
-    for (final shortcode in shortcodeTemplates) {
-      /*
-       Inline shortcodes
-      */
-
-      final pattern = RegExp('\\{{2}< ${shortcode.name} ((?!\\/).)* />\\}{2}');
-      final inlineMatches = pattern.allMatches(input);
-
-      for (final match in inlineMatches) {
-        final variables = _parseInlineShortcode(
-          input.substring(match.start, match.end),
-        );
-
-        final output = shortcode.render(
-          environment: environment,
-          values: variables.getValues(),
-        );
-
-        _result = _result.replaceFirst(
-          input.substring(match.start, match.end),
-          output,
-        );
-      }
-
-      /*
-       Block shortcodes
-      */
-
-      final startPattern =
-          RegExp('\\{{2}< ${shortcode.name}((?!\\/).)* >\\}{2}');
-      final endPattern = RegExp('\\{{2}< /${shortcode.name} >\\}{2}');
-
-      final startMatches = startPattern.allMatches(input);
-      final endMatches = endPattern.allMatches(input);
-
-      if (startMatches.length != endMatches.length) {
-        log.error(
-          'Body shortcodes must have both opening closing tag.',
-          help: 'Invalid use of ${shortcode.name} shortcode.',
-        );
-
-        throw const BuildError(
-          'Body shortcodes must have both opening closing tag.',
-        );
-      }
-
-      for (var x = 0; x < startMatches.length; x++) {
-        final startMatch = startMatches.elementAt(x);
-        final endMatch = endMatches.elementAt(x);
-
-        final variables = _parseBodyShortcode(
-          input.substring(startMatch.start, endMatch.end),
-        );
-        final output = shortcode.render(
-          environment: environment,
-          values: variables.getValues(),
-        );
-
-        _result = _result.replaceFirst(
-          input.substring(startMatch.start, endMatch.end),
-          output,
-        );
-      }
-    }
-    return _result;
-  }
-
-  // TODO: Parser might throw an error.
-  Shortcode _parseInlineShortcode(String input) {
-    final shortcode = parser.parseInline(input);
-    return shortcode;
-    // return _parseArgs(input);
-  }
-
-  Shortcode _parseBodyShortcode(String input) {
-    final _shortcode = parser.parseBlock(input);
-    return _shortcode;
-  }
 }

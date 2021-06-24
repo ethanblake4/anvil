@@ -1,4 +1,4 @@
-import 'package:blake/src/errors.dart';
+import 'package:anvil/src/errors.dart';
 import 'package:yaml/yaml.dart';
 
 /// Configuration specific to `build serve` command.

@@ -1,4 +1,4 @@
-import 'package:blake/src/util/either.dart';
+import 'package:anvil/src/util/either.dart';
 
 abstract class Maybe<A> {
   const Maybe();

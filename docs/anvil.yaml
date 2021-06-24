@@ -1,6 +1,6 @@
 title: Blake Static
 author: Vojtech Pavlovsky
-base_url: https://vaetas.github.io/blake/
+base_url: https://vaetas.github.io/anvil/
 
 build:
   verbose: false

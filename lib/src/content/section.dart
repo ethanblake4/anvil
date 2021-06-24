@@ -1,5 +1,6 @@
-import 'package:blake/src/content/content.dart';
-import 'package:blake/src/content/page.dart';
+import 'package:anvil/src/config.dart';
+import 'package:anvil/src/content/content.dart';
+import 'package:anvil/src/content/page.dart';
 
 /// [Section] is node with other subsections or pages.
 class Section extends Content {
@@ -36,11 +37,11 @@ class Section extends Content {
   }
 
   @override
-  R? when<R>({
-    R Function(Section section)? section,
-    R Function(Page page)? page,
+  R? when<R>(Config config, {
+    R Function(Config config, Section section)? section,
+    R Function(Config config, Page page)? page,
   }) {
-    return section?.call(this);
+    return section?.call(config, this);
   }
 
   @override

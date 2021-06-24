@@ -34,7 +34,7 @@ Future<void> docs() async {
 
   Future<void> runBlake(String mode) async {
     final process = await io.Process.start(
-      'blake',
+      'anvil',
       [mode],
       workingDirectory: workingDirectory,
     );

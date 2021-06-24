@@ -1,5 +1,5 @@
-import 'package:blake/src/config.dart';
-import 'package:blake/src/content/page.dart';
+import 'package:anvil/src/config.dart';
+import 'package:anvil/src/content/page.dart';
 
 class Tag {
   Tag({

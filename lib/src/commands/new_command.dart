@@ -2,16 +2,16 @@ import 'dart:async';
 
 import 'package:args/args.dart';
 import 'package:args/command_runner.dart';
-import 'package:blake/src/config.dart';
-import 'package:blake/src/file_system.dart';
-import 'package:blake/src/log.dart';
-import 'package:blake/src/utils.dart';
+import 'package:anvil/src/config.dart';
+import 'package:anvil/src/file_system.dart';
+import 'package:anvil/src/log.dart';
+import 'package:anvil/src/utils.dart';
 import 'package:file/file.dart';
 import 'package:jinja/jinja.dart';
 
 /// Create new content based on predefined types.
 ///
-/// Usage: blake new <type> <name>
+/// Usage: anvil new <type> <name>
 ///
 /// <type> must be an existing file inside `types_dir` without the extension.
 /// For example, say you have following content of `types_dir`:
@@ -22,11 +22,11 @@ import 'package:jinja/jinja.dart';
 ///   - ...
 ///
 /// To create a new post based on `post.yaml` inside `blog` subfolder, you would
-/// call following command: `blake new post blog/my-post`. This will create file
+/// call following command: `anvil new post blog/my-post`. This will create file
 /// with this path: `content/blog/my-post.md` and fills the Markdown frontmatter
 /// based on `post.yaml` type.
 class NewCommand extends Command<int> {
-  NewCommand(this.config) {
+  NewCommand(this._config) {
     argParser.addFlag(
       'force',
       defaultsTo: false,
@@ -42,16 +42,24 @@ class NewCommand extends Command<int> {
   final String description = 'Create new content based on predefined type.';
 
   @override
-  String get invocation => 'blake new <type> <name>';
+  String get invocation => 'anvil new <type> <name>';
 
-  final Config config;
+  final Config? _config;
 
   @override
   FutureOr<int> run() async {
+
+    if(_config == null) {
+      log.error('No $kAnvilConfigFile present in the current directory');
+      return 1;
+    }
+
+    final config = _config!;
+
     if (argResults!.rest.length != 2) {
       log.error(
         'Invalid usage of `new` command. '
-        'Correct usage is `blake new <type> <name>`',
+        'Correct usage is `anvil new <type> <name>`',
       );
       return 1;
     }
@@ -64,7 +72,7 @@ class NewCommand extends Command<int> {
       );
     }
 
-    final types = await getTypes();
+    final types = await getTypes(config);
 
     if (!types.containsKey(args.type)) {
       log.error(
@@ -114,7 +122,7 @@ class NewCommand extends Command<int> {
     return 0;
   }
 
-  Future<Map<String, String>> getTypes() async {
+  Future<Map<String, String>> getTypes(Config config) async {
     final dirContent =
         await fs.directory(config.build.typesDir).list().toList();
     final types = dirContent.whereType<File>();

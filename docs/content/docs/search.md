@@ -4,13 +4,13 @@ date: 2021-03-21
 template: page.html
 ---
 
-Blake allows generating a JSON page index for static site search. 
-There is currently no client-side implementation, and you must do it 
+Anvil allows generating a JSON page index for static site search. 
+There is currently no client-side implementation, so you must do it 
 yourself.
 
 ## Enable
 
-Search index generation is disabled by default. You can enable it inside your `config.yaml` file.
+Search index generation is disabled by default. You can enable it inside your `anvil.yaml` file.
 
 ```yaml
 build:
@@ -41,6 +41,6 @@ For now, the JSON format is very plain (this will change in the future). You can
   {
     "title":"Projects",
     "url":"http://127.0.0.1:4040/projects/"
-  },
+  }
 ]
 ```

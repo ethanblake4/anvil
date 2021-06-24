@@ -1,12 +1,12 @@
 import 'dart:async';
 import 'dart:io';
 
-import 'package:blake/src/file_system.dart';
-import 'package:blake/src/log.dart';
-import 'package:blake/src/utils.dart';
+import 'package:anvil/src/file_system.dart';
+import 'package:anvil/src/log.dart';
+import 'package:anvil/src/utils.dart';
 import 'package:mime/mime.dart';
 
-/// Local web server used for `blake serve` command.
+/// Local web server used for `anvil serve` command.
 ///
 /// This server binds to [address] and starts both HTTP and WebSocket (for
 /// live-reload) handler.

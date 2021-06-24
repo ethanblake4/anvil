@@ -1,4 +1,4 @@
-import 'package:blake/src/content/page.dart';
+import 'package:anvil/src/content/page.dart';
 
 /// Special [Page] used for aliasing/redirecting pages. Whenever you specify
 /// `aliases` inside your frontmatter, [RedirectPage] is created.

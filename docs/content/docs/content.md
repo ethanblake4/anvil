@@ -73,17 +73,17 @@ file.
 ├── content
 │  ├── projects
 │  │  ├── _index.md
-│  │  ├── blake.md
+│  │  ├── anvil.md
 │  │  └── gh_pages.md
 ```
 
 Your directory will have structure as in the example above. However, your published 
-page will only have `/projects/` path rendered. If you try to visit `/projects/blake/` 
+page will only have `/projects/` path rendered. If you try to visit `/projects/anvil/` 
 you will see a 404 error.
 
 ## Markdown
 
-Blake uses [markdown](https://pub.dev/packages/markdown) package for rendering.
+Anvil uses [markdown](https://pub.dev/packages/markdown) package for rendering.
 
 ## Jinja in Markdown
 
