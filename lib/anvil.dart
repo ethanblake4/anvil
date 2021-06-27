@@ -24,7 +24,6 @@ export 'src/search.dart';
 export 'src/serve/local_server.dart';
 export 'src/serve/serve_config.dart';
 export 'src/serve/watch.dart';
-export 'src/sitemap_builder.dart';
 export 'src/taxonomy.dart';
 export 'src/template/templates_config.dart';
 export 'src/yaml.dart';

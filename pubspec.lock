@@ -8,15 +8,6 @@ packages:
       url: "https://pub.dartlang.org"
     source: hosted
     version: "20.0.0"
-  analysis_options:
-    dependency: "direct dev"
-    description:
-      path: "."
-      ref: HEAD
-      resolved-ref: "16698571fbabf55176192a4bf2258c40943f98f4"
-      url: "https://github.com/vaetas/analysis_options.git"
-    source: git
-    version: "1.0.0"
   analyzer:
     dependency: transitive
     description:

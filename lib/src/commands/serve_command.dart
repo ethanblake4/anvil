@@ -54,8 +54,8 @@ class ServeCommand extends Command<int> {
     return _serve(_config!);
   }
 
-  Future<void> _rebuild(Config config) async {
-    final result = await buildCommand.build(
+  void _rebuild(Config config) {
+    final result = buildCommand.build(
       config,
       isServe: true,
     );
@@ -68,7 +68,7 @@ class ServeCommand extends Command<int> {
   Future<int> _serve(Config config) async {
     buildCommand = BuildCommand(config);
     // Build once before starting server to ensure there is something to show.
-    await _rebuild(config);
+    _rebuild(config);
 
     try {
       await setupReloadScript(config);
@@ -91,20 +91,20 @@ class ServeCommand extends Command<int> {
       '}',
     );
 
-    watch('.', files: glob).listen((event) async {
+    watch('.', files: glob).listen((event) {
       // ignore: avoid_print
       print('');
       log.info('Event: $event');
       if (event.path.startsWith(config.build.templatesDir)) {
         final templatePath =
             event.path.replaceFirst('${config.build.templatesDir}/', '');
-        final content = await fs.file(event.path).readAsString();
+        final content = fs.file(event.path).readAsStringSync();
         config.environment.fromString(
           content,
           path: templatePath,
         );
       }
-      await _rebuild(config);
+      _rebuild(config);
       _onReload.add(null);
     });
 

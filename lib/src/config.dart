@@ -1,6 +1,7 @@
 import 'package:anvil/src/build/build_config.dart';
 import 'package:anvil/src/commands/serve_command.dart';
 import 'package:anvil/src/serve/serve_config.dart';
+import 'package:anvil/src/template/environment.dart';
 import 'package:anvil/src/template/templates_config.dart';
 import 'package:jinja/jinja.dart';
 import 'package:yaml/yaml.dart';
@@ -49,7 +50,7 @@ class Config {
   /// [FileSystemLoader.autoReload] is not required because we handle reloading
   /// templates ourselves inside [ServeCommand]. Only this way we can ensure
   /// the template is updated before triggering rebuild.
-  late final environment = Environment(
+  late final environment = CustomEnvironment(
     loader: FileSystemLoader(
       path: build.templatesDir,
     ),

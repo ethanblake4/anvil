@@ -16,24 +16,24 @@ import 'package:file/file.dart';
 /// be the same).
 ///
 /// See `example` directory for reference.
-Future<Map<String, Object?>> parseDataTree(
+Map<String, Object?> parseDataTree(
   Config config, {
   String? path,
-}) async {
+}) {
   final data = <String, Object?>{};
   path ??= config.build.dataDir;
-  final nodes = await fs.directory(path).list().toList();
+  final nodes = fs.directory(path).listSync().toList();
 
   for (final e in nodes) {
-    await e.when(
-      directory: (directory) async {
+    e.when(
+      directory: (directory) {
         final name = Path.basename(directory.path);
-        data[name] = await parseDataTree(config, path: directory.path);
+        data[name] = parseDataTree(config, path: directory.path);
       },
-      file: (file) async {
+      file: (file) {
         final name = Path.basenameWithoutExtension(file.path);
         try {
-          final dynamic content = await _parseData(file);
+          final dynamic content = _parseData(file);
           data[name] = content;
         } catch (e) {
           log.error(e);
@@ -45,10 +45,10 @@ Future<Map<String, Object?>> parseDataTree(
   return data;
 }
 
-dynamic _parseData(File file) async {
+dynamic _parseData(File file) {
   final extension =
       Path.extension(file.path).toLowerCase().replaceFirst('.', '');
-  final content = await file.readAsString();
+  final content = file.readAsStringSync();
 
   if (extension != 'json') {
     throw BuildError('Invalid data format: $extension');

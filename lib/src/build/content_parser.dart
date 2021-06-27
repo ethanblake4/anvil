@@ -1,5 +1,3 @@
-import 'dart:io';
-
 import 'package:anvil/src/config.dart';
 import 'package:anvil/src/content/content.dart';
 import 'package:anvil/src/content/page.dart';
@@ -22,16 +20,16 @@ class ContentParser {
   final Config config;
 
   /// Recursively parse file tree starting from [entity].
-  Future<Content> parse(FileSystemEntity entity) async {
+  Content parse(FileSystemEntity entity) {
     return entity.when(
-      file: (file) async {
+      file: (file) {
 
         final extension = file.path.substring(file.path.lastIndexOf('.') + 1);
         final contentType = (extension == 'html')
             ? ContentFileType.html : ContentFileType.markdown;
 
-        final content = await file.readAsString();
-        final parsed = await _parseFile(contentType, content);
+        final content = file.readAsStringSync();
+        final parsed = _parseFile(contentType, content);
 
         // Remove leading 'content/' part of the directory.
         final path = Path.normalize(file.path).replaceFirst(
@@ -57,10 +55,10 @@ class ContentParser {
           metadata: metadata,
         );
       },
-      directory: (directory) async {
-        final children = await directory.list().toList();
+      directory: (directory) {
+        final children = directory.listSync().toList();
 
-        final content = (await children.asyncMap(parse)).toList();
+        final content = (children.map(parse)).toList();
 
         final index = content.where((e) => e is Page && e.isIndex);
         if (index.length > 1) {
@@ -95,9 +93,9 @@ class ContentParser {
     )!;
   }
 
-  Future<ContentFile> _parseFile(
+  ContentFile _parseFile(
       ContentFileType type,
-      String fileContent) async {
+      String fileContent) {
     if (_delimiter.allMatches(fileContent).length < 2 ||
         _delimiter.firstMatch(fileContent)!.start != 0) {
       throw const MissingFrontmatterError(

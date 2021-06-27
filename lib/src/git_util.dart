@@ -1,5 +1,4 @@
 import 'package:file/file.dart';
-import 'package:process_run/shell.dart' hide which;
 import 'package:dcli/dcli.dart' hide Shell;
 
 class GitUtil {

@@ -1,10 +1,10 @@
 import 'package:anvil/anvil.dart';
+import 'package:anvil/src/build/build_data.dart';
 import 'package:anvil/src/config.dart';
 import 'package:anvil/src/content/content.dart';
 import 'package:anvil/src/content/section.dart';
 import 'package:anvil/src/file_system.dart';
 import 'package:anvil/src/git_util.dart';
-import 'package:anvil/src/log.dart';
 import 'package:anvil/src/utils.dart';
 
 /// [Page] is leaf node which cannot have other subpages.
@@ -125,11 +125,11 @@ class Page extends Content {
   }
 
   @override
-  R? when<R>(Config config, {
-    R Function(Config config, Section section)? section,
-    R Function(Config config, Page page)? page,
+  R? when<R>(Config config, BuildData buildData, {
+    R Function(Config config, BuildData buildData, Section section)? section,
+    R Function(Config config, BuildData buildData, Page page)? page,
   }) {
-    return page?.call(config, this);
+    return page?.call(config, buildData, this);
   }
 
   @override

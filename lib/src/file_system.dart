@@ -34,8 +34,8 @@ extension FileSystemEntityExtension on FileSystemEntity {
   }
 }
 
-Future<Directory> _getOrThrow(Directory directory) async {
-  if (await directory.exists()) {
+Directory _getOrThrow(Directory directory) {
+  if (directory.existsSync()) {
     return directory;
   }
 
@@ -51,7 +51,7 @@ Future<Directory> getPublicDirectory(Config config) async {
   );
 }
 
-/// Content directory contains Markdown files.
+/// Content directory contains Markdown/HTML files.
 ///
 /// Config: `build.content_dir`
 Future<Either<BuildError, Directory>> getContentDirectory(Config config) async {
@@ -67,7 +67,7 @@ Future<Either<BuildError, Directory>> getContentDirectory(Config config) async {
 /// inside content folder.
 ///
 /// Config: `build.templates_dir`
-Future<Directory> getTemplatesDirectory(Config config) async {
+Directory getTemplatesDirectory(Config config) {
   return _getOrThrow(
     fs.directory(config.build.templatesDir),
   );
@@ -76,13 +76,13 @@ Future<Directory> getTemplatesDirectory(Config config) async {
 /// Static folder contains files to be copied into public folder like CSS or JS.
 ///
 /// Config: `build.static_dir`
-Future<Directory> getStaticDirectory(Config config) async {
+Directory getStaticDirectory(Config config) {
   return _getOrThrow(
     fs.directory(config.build.staticDir),
   );
 }
 
-Future<Directory> getDataDirectory(Config config) async {
+Directory getDataDirectory(Config config) {
   return _getOrThrow(
     fs.directory(config.build.dataDir),
   );
