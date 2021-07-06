@@ -109,10 +109,6 @@ jinja.Template? _getTemplate(
     );
   }
 
-  try {
-    return config.environment.getTemplate(templateName);
-  } on ArgumentError catch (e) {
-    log.error(e.message);
-    return null;
-  }
+  return config.environment.getTemplate(templateName);
+
 }

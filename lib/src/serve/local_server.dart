@@ -83,14 +83,20 @@ class DirectoryServer {
       path = Path.join(this.path, uri);
     }
 
-    final file = fs.file(path);
+    var file = fs.file(path);
     final response = request.response;
 
     if (!await file.exists()) {
       // TODO: Return 404 page when files doesn't exists.
-      response.statusCode = HttpStatus.notFound;
-      await response.close();
-      return;
+
+      path = Path.join(this.path, uri, 'index.html');
+
+      file = fs.file(path);
+      if (!await file.exists()) {
+        response.statusCode = HttpStatus.notFound;
+        await response.close();
+        return;
+      }
     }
 
     final extension = Path.extension(path);
