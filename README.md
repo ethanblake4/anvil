@@ -22,6 +22,12 @@ Features as of now:
 
 Remember that this project is WIP. Everything can change at any time.
 
+## Installation
+
+[Install Dart](https://dart.dev/get-dart).
+
+Run `pub global activate anvil`.
+
 ## Usage
 
 Use `anvil init` to setup a new project in the current directory. `anvil init <name>` will setup the project inside the `<name>` directory.
