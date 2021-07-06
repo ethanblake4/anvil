@@ -46,5 +46,3 @@ app.*.map.json
 # Build
 *.exe
 public/
-bin/
-!bin/anvil.dart
